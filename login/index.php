@@ -2,16 +2,32 @@
 require'Usuario.class.php';
 
 $usuario = new Usuario();
-$usuario->setNome('Fabio Claret');
-$usuario->setEmail('fabio.claret@gmail.com');
-$usuario->setSenha('123');
 
-$nome  = $usuario->getNome();
-$email = $usuario->getEmail();
-$senha = $usuario->getSenha();
+$con = $usuario->conecta();
 
-echo "<h1>Nome: $nome <br>";
-echo "email: $email <br>";
-echo "senha: $senha ";
+if ($con) {
+
+    $email = "gui@gmail.com";
+    $teste = $usuario->procurarEmail($email);
+
+    if(!$teste) {
+       $sucesso = $usuario->cadastraUsuario("Guilherme", "gui@gmail.com", "123456");
+
+        if($sucesso) {
+                echo "<script>
+                alert('Usuário cadastrado com SUCESSO')
+                </script>";
+            } else {
+                echo "<script>
+                alert('Não foi possível cadastrar o usuário.')
+                </script>";
+            }
+            }else{
+        echo "<script>
+                alert('Esse usuário já existe.')
+                </script>";
+        }
+}
 
 
+?>

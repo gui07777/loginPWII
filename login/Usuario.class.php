@@ -6,14 +6,18 @@ class Usuario{
     private $senha;
     private $pdo;
 
-    public function __construct(){
+    public function conecta(){
         $dns  = "mysql:dbname=usuario;host=localhost";
         $user = "root";
         $pass = "";
 
-        $this->pdo = new PDO($dns, $user, $pass);
-        echo"Conectado ao banco!";
-                
+        try{
+            $this->pdo = new PDO($dns, $user, $pass);
+            return true;
+        }catch (Exception $e) {
+            echo "<h1>Erro ao conectar</h1>";
+            return false;
+        }     
     }
 
     public function getId(){
@@ -39,5 +43,32 @@ class Usuario{
         $this->senha = $senha;
     }
 
+    public function cadastraUsuario($nome, $email, $senha) {
+#passo1 - criar uma variavel comm consulta sql
+        $sql = "INSERT INTO usuario SET nome = :n, email = :e, senha = :s";
+        
+        #passo2 - chamar o metodo prepare passando a variavael
+        $sql = $this->pdo->prepare($sql);
+        
+        #passo3 - trocar os apelidos pelo conteúdo da variavel
+        $sql->bindValue(":n", $nome);
+        $sql->bindValue(":e", $email);
+        $sql->bindValue(":s", $senha);
 
+        #passo4 - executar o comando sql em si
+        return $sql->execute();
+    }
+
+    public function procurarEmail($email) {
+        $sql = "SELECT * FROM usuario WHERE email = :e";
+        
+        $sql = $this->pdo->prepare($sql);
+        
+        $sql->bindValue(":e", $email);
+
+        return $sql->execute();
+
+        return $sql->rowCount() > 0;  #inves de fazer if else, faz return que significa: se é maior que zero retorna verdadeiro
+    }
 }
+?>
